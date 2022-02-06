@@ -1,26 +1,44 @@
 package qadr.springboot.awsimageupload.profile;
 
+import javax.persistence.*;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
+@Entity
+@Table(
+        name = "user_profiles",
+        uniqueConstraints = {
+                @UniqueConstraint(name = "uuid_unique", columnNames = "user_profile_id")
+        }
+)
 public class UserProfile {
-    private UUID userProfileId;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    @Column(name = "user_profile_id", unique = true)
+    private String userProfileId;
+    @Column(name = "username")
     private String username;
+    @Column(name = "user_profile_image_link")
     private String userProfileImageLink; // aws s3 link to object
 
+    public UserProfile() {
+    }
+
     public UserProfile(UUID userProfileId, String username, String userProfileImageLink) {
-        this.userProfileId = userProfileId;
+        super();
+        this.userProfileId = userProfileId.toString();
         this.username = username;
         this.userProfileImageLink = userProfileImageLink;
     }
 
-    public UUID getUserProfileId() {
+    public String getUserProfileId() {
         return userProfileId;
     }
 
     public void setUserProfileId(UUID userProfileId) {
-        this.userProfileId = userProfileId;
+        this.userProfileId = userProfileId.toString();
     }
 
     public String getUsername() {
@@ -29,6 +47,10 @@ public class UserProfile {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public Long getId() {
+        return id;
     }
 
     public Optional<String> getUserProfileImageLink() {

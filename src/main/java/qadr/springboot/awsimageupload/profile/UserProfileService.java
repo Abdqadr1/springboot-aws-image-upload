@@ -20,7 +20,7 @@ public class UserProfileService {
     private FileStore fileStore;
 
     List<UserProfile> getUserProfiles (){
-        return userProfileRepository.getFakeProfiles();
+        return userProfileRepository.findAll();
     }
 
     void uploadProfileImage(UUID uid, MultipartFile file) {
@@ -39,7 +39,7 @@ public class UserProfileService {
                 .substring(0, file.getOriginalFilename().lastIndexOf("."))+ "-"+UUID.randomUUID();
         try {
             fileStore.save(path, filename, Optional.of(metadata), file.getInputStream());
-            user.setUserProfileImageLink(filename);
+            userProfileRepository.updateProfileImageLink(user.getId(), filename);
         } catch (IOException e) {
             throw new IllegalStateException(e);
         }
@@ -53,9 +53,7 @@ public class UserProfileService {
     }
 
     private UserProfile getUserOrThrow(UUID uid) {
-        UserProfile user = userProfileRepository.getFakeProfiles()
-                .stream().filter(profile -> profile.getUserProfileId().equals(uid))
-                .findFirst()
+        UserProfile user = userProfileRepository.findByUserProfileId(uid.toString())
                 .orElseThrow(() -> new ObjectNotFoundException(String.format("User profile %s not found", uid)));
         return user;
     }

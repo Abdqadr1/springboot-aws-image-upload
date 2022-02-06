@@ -1,14 +1,20 @@
 package qadr.springboot.awsimageupload.datastore;
 
-import org.springframework.stereotype.Repository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import qadr.springboot.awsimageupload.profile.UserProfile;
+import qadr.springboot.awsimageupload.profile.UserProfileRepository;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-@Repository
+@Configuration
 public class FakeProfiles {
+
+    @Autowired
+    private UserProfileRepository userProfileRepository;
 
     private List<UserProfile> userProfileList = new ArrayList<>();
 
@@ -24,16 +30,10 @@ public class FakeProfiles {
         userProfileList.add(new UserProfile(UUID.fromString("a38e8afc-a64a-4e85-8036-7921b5b70815"), "abdqadr18", null));
     }
 
-    public List<UserProfile> getUserProfiles(){
-        return userProfileList;
-    }
-    public boolean isUserExist(UUID uuid){
-        for (UserProfile profile: userProfileList){
-            if(profile.getUserProfileId().equals(uuid)){
-                return true;
-            }
-        }
-        return false;
+    @Bean
+    public void populateDb(){
+        System.out.println("Populating the database...");
+        userProfileRepository.saveAll(userProfileList);
     }
 
 }
